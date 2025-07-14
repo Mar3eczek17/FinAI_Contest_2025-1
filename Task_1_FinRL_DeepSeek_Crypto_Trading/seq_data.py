@@ -10,7 +10,7 @@ from scipy.stats import rankdata
 
 
 class ConfigData:
-    def __init__(self, data_dir: str = "./data"):
+    def __init__(self, data_dir: str = "./Task_1_FinRL_DeepSeek_Crypto_Trading/data"):
         self.data_dir = data_dir
 
         self.csv_path = f"{data_dir}/BTC_1sec_with_sentiment_risk_train.csv"
@@ -1293,6 +1293,11 @@ def convert_btc_csv_to_btc_npy(args=ConfigData()):
 
     df = pd.read_csv(csv_path)
 
+    if "midpoint" not in df.columns:
+        print("Error: 'midpoint' column not found in the CSV file.")
+        print("Please ensure the CSV file is correctly formatted and not an HTML page.")
+        exit()
+
     if not os.path.exists(label_ary_path):
         price_ary = df["midpoint"].values
         label_ary = seq_to_label(ary=price_ary, win_sizes=(10, 20, 30, 60, 80, 100, 200, 400), if_print=False)
@@ -1327,4 +1332,4 @@ def convert_btc_csv_to_btc_npy(args=ConfigData()):
 if __name__ == "__main__":
     # convert_csv_to_level5_csv()
     # check_btc_1s_csv()
-    convert_btc_csv_to_btc_npy()
+    convert_btc_csv_to_btc_npy(args=ConfigData(data_dir="Task_1_FinRL_DeepSeek_Crypto_Trading/data"))

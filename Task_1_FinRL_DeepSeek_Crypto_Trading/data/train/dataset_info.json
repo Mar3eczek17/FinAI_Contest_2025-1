@@ -1,0 +1,78 @@
+{
+  "builder_name": "csv",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "fin_rl_btc_news_signals",
+  "dataset_size": 1209466,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/SecureFinAI-Lab/FinRL_BTC_news_signals@9c5eae6925d112a6d085a83a58c67521be1aaeb0/news_train.csv": {
+      "num_bytes": 1203040,
+      "checksum": null
+    }
+  },
+  "download_size": 1203040,
+  "features": {
+    "date_time": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "title": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "url": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "source": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "article_text": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "sentiment_score": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "confidence_score_sentiment": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "reasoning_sentiment": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "risk_score": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "confidence_score_risk": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "reasoning_risk": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 2412506,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 1209466,
+      "num_examples": 279,
+      "dataset_name": "fin_rl_btc_news_signals"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
