@@ -91,7 +91,7 @@ class AgentDoubleDQN:
             if if_save:
                 torch.save(getattr(self, attr_name), file_path)
             elif os.path.isfile(file_path):
-                setattr(self, attr_name, torch.load(file_path, map_location=self.device))
+                setattr(self, attr_name, torch.load(file_path, map_location=self.device, weights_only=False))
 
     def explore_env(self, env, horizon_len: int, if_random: bool = False) -> Tuple[Tensor, ...]:
         """

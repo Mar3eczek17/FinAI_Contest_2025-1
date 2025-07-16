@@ -424,7 +424,7 @@ def valid_agent(args: Config):
     # agent_path = sorted([file for file in os.listdir(cwd)
     #                      if len(file) == len('actor_00191970.pth')])[-1]
     agent.act.load_state_dict(
-        torch.load(f"{cwd}/{agent_path}", map_location=agent.device).state_dict()
+        torch.load(f"{cwd}/{agent_path}", map_location=agent.device, weights_only=False).state_dict()
     )
 
     actor = agent.act
