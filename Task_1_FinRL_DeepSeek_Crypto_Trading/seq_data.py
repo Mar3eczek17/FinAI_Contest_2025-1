@@ -10,12 +10,13 @@ from scipy.stats import rankdata
 
 
 class ConfigData:
-    def __init__(self, data_dir: str = "./Task_1_FinRL_DeepSeek_Crypto_Trading/data"):
-        self.data_dir = data_dir
+    def __init__(self, data_dir: str = "data"):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.data_dir = os.path.join(script_dir, data_dir)
 
-        self.csv_path = f"{data_dir}/BTC_1sec_with_sentiment_risk_train.csv"
-        self.input_ary_path = f"{data_dir}/BTC_1sec_input.npy"
-        self.label_ary_path = f"{data_dir}/BTC_1sec_label.npy"
+        self.csv_path = f"{self.data_dir}/BTC_1sec_with_sentiment_risk_train.csv"
+        self.input_ary_path = f"{self.data_dir}/BTC_1sec_input.npy"
+        self.label_ary_path = f"{self.data_dir}/BTC_1sec_label.npy"
 
         self.predict_ary_path = f"{data_dir}/BTC_1sec_predict.npy"
         self.predict_net_path = f"{data_dir}/BTC_1sec_predict.pth"
@@ -1332,4 +1333,4 @@ def convert_btc_csv_to_btc_npy(args=ConfigData()):
 if __name__ == "__main__":
     # convert_csv_to_level5_csv()
     # check_btc_1s_csv()
-    convert_btc_csv_to_btc_npy(args=ConfigData(data_dir="Task_1_FinRL_DeepSeek_Crypto_Trading/data"))
+    convert_btc_csv_to_btc_npy(args=ConfigData())
