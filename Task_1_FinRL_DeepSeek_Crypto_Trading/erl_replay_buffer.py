@@ -6,11 +6,11 @@ from torch import Tensor
 
 class ReplayBuffer:  # for off-policy
     def __init__(self,
-                 max_size: int,
                  state_dim: int,
                  action_dim: int,
                  gpu_id: int = 0,
-                 num_seqs: int = 1, ):
+                 num_seqs: int = 1,
+                 max_size: int = 2**18):
         self.p = 0  # pointer
         self.if_full = False
         self.cur_size = 0

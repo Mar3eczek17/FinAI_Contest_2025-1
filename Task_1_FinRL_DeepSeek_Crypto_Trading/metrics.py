@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import empyrical as ep
 
 def cumulative_returns(returns_pct):
     """
@@ -8,7 +7,7 @@ def cumulative_returns(returns_pct):
 
     return a pd.Series
     """
-    return ep.cum_returns(returns_pct)
+    return (1 + returns_pct).cumprod() - 1
 
 def sharpe_ratio(returns_pct, risk_free=0):
     """
@@ -29,7 +28,10 @@ def max_drawdown(returns_pct):
 
     return: float
     """
-    return ep.max_drawdown(returns_pct)
+    cum_returns = (1 + returns_pct).cumprod()
+    peak = cum_returns.expanding(min_periods=1).max()
+    drawdown = (cum_returns/peak) - 1
+    return drawdown.min()
 
 def return_over_max_drawdown(returns_pct):
     """
@@ -38,9 +40,7 @@ def return_over_max_drawdown(returns_pct):
     return: float
     """
     mdd = abs(max_drawdown(returns_pct))
-    returns = cumulative_returns(returns_pct)[len(returns_pct)-1]
+    returns = cumulative_returns(returns_pct).iloc[-1]
     if mdd == 0:
         return np.inf
     return returns/mdd
-
-

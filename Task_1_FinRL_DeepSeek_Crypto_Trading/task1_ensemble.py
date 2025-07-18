@@ -99,11 +99,22 @@ class Ensemble:
     def ensemble_train(self):
         args = self.args
 
+        if args.if_off_policy:
+            buffer = ReplayBuffer(
+                gpu_id=args.gpu_id,
+                num_seqs=args.num_envs,
+                max_size=args.buffer_size,
+                state_dim=args.state_dim,
+                action_dim=1 if args.if_discrete else args.action_dim,
+            )
+        else:
+            buffer = []
+
         for agent_class in self.agent_classes:
 
             args.agent_class = agent_class
 
-            agent = self.train_agent(args=args)
+            agent = self.train_agent(args=args, buffer=buffer)
             self.agents.append(agent)
 
         self.save_ensemble()
@@ -114,7 +125,7 @@ class Ensemble:
         majority_action, _ = count.most_common(1)[0]
         return majority_action
 
-    def train_agent(self, args: Config):
+    def train_agent(self, args: Config, buffer: ReplayBuffer):
         """
         Trains agent
         Builds env inside
@@ -154,15 +165,16 @@ class Ensemble:
         """init buffer"""
 
         if args.if_off_policy:
-            buffer = ReplayBuffer(
-                gpu_id=args.gpu_id,
-                num_seqs=args.num_envs,
-                max_size=args.buffer_size,
-                state_dim=args.state_dim,
-                action_dim=1 if args.if_discrete else args.action_dim,
-            )
             buffer_items = agent.explore_env(env, args.horizon_len * args.eval_times, if_random=True)
-            buffer.update(buffer_items)  # warm up for ReplayBuffer
+            # Truncate buffer_items to match max_size if its first dimension is larger
+            truncated_buffer_items = []
+            for item in buffer_items:
+                # Assuming the first dimension is the one to truncate
+                if item.shape[0] > args.buffer_size:
+                    truncated_buffer_items.append(item[:args.buffer_size])
+                else:
+                    truncated_buffer_items.append(item)
+            buffer.update(tuple(truncated_buffer_items))  # warm up for ReplayBuffer
         else:
             buffer = []
 
@@ -178,7 +190,7 @@ class Ensemble:
         horizon_len = args.horizon_len
         if_off_policy = args.if_off_policy
         if_save_buffer = args.if_save_buffer
-        del args
+        # del args # Removed to fix UnboundLocalError
 
         import torch as th
 
@@ -200,7 +212,15 @@ class Ensemble:
 
             exp_r = buffer_items[2].mean().item()
             if if_off_policy:
-                buffer.update(buffer_items)
+                # Truncate buffer_items to match max_size if its first dimension is larger
+                truncated_buffer_items = []
+                for item in buffer_items:
+                    # Assuming the first dimension is the one to truncate
+                    if item.shape[0] > args.buffer_size:
+                        truncated_buffer_items.append(item[:args.buffer_size])
+                    else:
+                        truncated_buffer_items.append(item)
+                buffer.update(tuple(truncated_buffer_items))
             else:
                 buffer[:] = buffer_items
 
@@ -267,7 +287,7 @@ def run(save_path, agent_list, log_rules=False):
     args.learning_rate = 2e-6
     args.batch_size = 512
     args.break_step = int(32)  # TODO reset to 32e4
-    args.buffer_size = int(max_step * 32)
+    args.buffer_size = int(max_step * 4)
     args.repeat_times = 2
     args.horizon_len = int(max_step * 4)
     args.eval_per_step = int(max_step)

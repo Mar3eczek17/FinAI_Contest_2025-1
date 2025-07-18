@@ -1,6 +1,7 @@
 import os
 import torch
 import numpy as np
+import pandas as pd
 from erl_config import Config, build_env
 from trade_simulator import EvalTradeSimulator
 from erl_agent import AgentD3QN, AgentDoubleDQN, AgentTwinD3QN
@@ -128,7 +129,7 @@ class EnsembleEvaluator:
         np.save(f"{self.save_path}_correct_predictions.npy", np.array(correct_pred))
 
         # Compute metrics
-        returns = np.diff(self.net_assets) / self.net_assets[:-1]
+        returns = pd.Series(np.diff(self.net_assets) / self.net_assets[:-1])
         final_sharpe_ratio = sharpe_ratio(returns)
         final_max_drawdown = max_drawdown(returns)
         final_roma = return_over_max_drawdown(returns)
@@ -168,7 +169,7 @@ def run_evaluation(save_path, agent_list):
         "slippage": slippage,
         "num_sims": num_sims,
         "step_gap": step_gap,
-        "dataset_path": "./data/BTC_1sec_with_sentiment_risk_test.csv",  # Replace with your evaluation dataset path
+        "dataset_path": "./data/BTC_1sec_with_sentiment_risk_train.csv",  # Using train data as test data is not provided
     }
     args = Config(agent_class=None, env_class=EvalTradeSimulator, env_args=env_args)
     args.gpu_id = gpu_id
@@ -186,6 +187,6 @@ def run_evaluation(save_path, agent_list):
 
 
 if __name__ == "__main__":
-    save_path = "trained_agents"
+    save_path = "ensemble_teamname/ensemble_models"
     agent_list = [AgentD3QN, AgentDoubleDQN, AgentTwinD3QN]
     run_evaluation(save_path, agent_list)
