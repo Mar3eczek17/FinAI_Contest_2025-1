@@ -18,8 +18,8 @@ class ConfigData:
         self.input_ary_path = f"{self.data_dir}/BTC_1sec_input.npy"
         self.label_ary_path = f"{self.data_dir}/BTC_1sec_label.npy"
 
-        self.predict_ary_path = f"{data_dir}/BTC_1sec_predict.npy"
-        self.predict_net_path = f"{data_dir}/BTC_1sec_predict.pth"
+        self.predict_ary_path = f"{self.data_dir}/BTC_1sec_predict.npy"
+        self.predict_net_path = f"{self.data_dir}/BTC_1sec_predict.pth"
 
 def convert_csv_to_level5_csv():
     args = ConfigData()

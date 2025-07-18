@@ -17,7 +17,7 @@ class TradeSimulator:
         device=th.device("cpu"),
         gpu_id=-1,
     ):
-        self.device = th.device("cpu")
+        self.device = th.device(f"cuda:{gpu_id}") if gpu_id >= 0 else device
         self.num_sims = num_sims
 
         self.slippage = slippage
