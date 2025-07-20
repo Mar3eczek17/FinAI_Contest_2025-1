@@ -96,16 +96,16 @@ class EnsembleEvaluator:
 
             if action_int > 0 and self.cash[-1] > mid_price:  # Buy
                 last_cash = self.cash[-1]
-                new_cash = last_cash - mid_price
-                self.current_btc += 1
+                new_cash = last_cash - mid_price * action_int
+                self.current_btc += action_int
             elif action_int < 0 and self.current_btc > 0:  # Sell
                 last_cash = self.cash[-1]
-                new_cash = last_cash + mid_price
-                self.current_btc -= 1
+                new_cash = last_cash + mid_price * abs(action_int)
+                self.current_btc += action_int
 
             self.cash.append(new_cash)
             self.btc_assets.append((self.current_btc * mid_price).item())
-            self.net_assets.append((to_python_number(self.btc_assets[-1]) + to_python_number(new_cash)))
+            self.net_assets.append(to_python_number(new_cash) + (self.current_btc * mid_price).item())
 
             last_state = state
 
@@ -169,7 +169,8 @@ def run_evaluation(save_path, agent_list):
         "slippage": slippage,
         "num_sims": num_sims,
         "step_gap": step_gap,
-        "dataset_path": "./data/BTC_1sec_with_sentiment_risk_train.csv",  # Using train data as test data is not provided
+        "dataset_path": "Task_1_FinRL_DeepSeek_Crypto_Trading/data/BTC_1sec_predict.npy",
+        "predict_ary_path": "Task_1_FinRL_DeepSeek_Crypto_Trading/data/BTC_1sec_predict.npy"
     }
     args = Config(agent_class=None, env_class=EvalTradeSimulator, env_args=env_args)
     args.gpu_id = gpu_id
@@ -187,6 +188,6 @@ def run_evaluation(save_path, agent_list):
 
 
 if __name__ == "__main__":
-    save_path = "ensemble_teamname/ensemble_models"
+    save_path = "FinAI_Masters/ensemble_models"
     agent_list = [AgentD3QN, AgentDoubleDQN, AgentTwinD3QN]
     run_evaluation(save_path, agent_list)

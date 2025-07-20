@@ -16,6 +16,8 @@ class TradeSimulator:
         num_ignore_step=60,
         device=th.device("cpu"),
         gpu_id=-1,
+        dataset_path="",
+        predict_ary_path="",
     ):
         self.device = th.device(f"cuda:{gpu_id}") if gpu_id >= 0 else device
         self.num_sims = num_sims
@@ -31,16 +33,16 @@ class TradeSimulator:
         args = ConfigData()
 
         """load data"""
-        self.factor_ary = np.load(args.predict_ary_path)
+        self.factor_ary = np.load(predict_ary_path)
         self.factor_ary = th.tensor(self.factor_ary, dtype=th.float32)  # CPU
 
-        data_df = pd.read_csv(args.csv_path)  # CSV READ HERE
+        data = np.load(dataset_path)
 
-        self.price_ary = data_df[["bids_distance_3", "asks_distance_3", "midpoint"]].values
+        self.price_ary = data[:, :3]
         self.price_ary[:, 0] = self.price_ary[:, 2] * (1 + self.price_ary[:, 0])
         self.price_ary[:, 1] = self.price_ary[:, 2] * (1 + self.price_ary[:, 1])
 
-        self.llm_signals = data_df[["sentiment_score", "risk_score"]].values
+        self.llm_signals = data[:, 3:5]
         
 
         """Align with the rear of the dataset instead"""
